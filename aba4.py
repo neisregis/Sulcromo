@@ -19,7 +19,8 @@ def exibir_aba4(df):
     st.subheader("Faturamento")
 
     # Filtrar dados para situação "FATURADO"
-    df_faturado = df[df['Situação'] == "FATURADO"].copy()
+    #df_faturado = df[df['Situação'] == "FATURADO"].copy()
+    df_faturado = df.copy()
 
     # Extrair os meses/anos únicos da coluna "Data Oficial Faturamento"
     df_faturado['Data Oficial Faturamento'] = pd.to_datetime(df_faturado['Data Oficial Faturamento'], errors='coerce')

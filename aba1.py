@@ -34,7 +34,7 @@ def filtrar_dados(df, cliente=None, responsaveis=None, situacoes=None, represent
 # Função para formatar dados para exibição
 def formatar_dados_exibicao(df):
     colunas_data = ['Data Recebimento', 'Data Inicio OS', 'Data Fim OS', 'Data Orçamento', 'Data Solicitação', 
-                    'Data Carteira', 'Data Faturamento', 'Data Devolução', 'Data Oficial Faturamento']
+                    'Data Carteira', 'Data Faturamento', 'Data Devolução', 'Data Oficial Faturamento', 'Data Inspeção']
     for coluna in colunas_data:
         df[coluna] = pd.to_datetime(df[coluna], errors='coerce').dt.strftime('%d/%m/%Y')
     colunas_valor = ['Valor Bruto', 'Valor Líquido']
@@ -44,27 +44,29 @@ def formatar_dados_exibicao(df):
 
 # Função para gerar o arquivo Excel com formatação para valores e datas
 def gerar_excel(df):
-    # Cria uma cópia do DataFrame para formatação
+    # Cria uma cópia do DataFrame para exportação
     df_export = df.copy()
     
-    # Aplica a formatação de valores sem o "R$" e com vírgulas e pontos no padrão brasileiro
+    # Converte colunas de valores para numéricas (caso necessário)
     colunas_valores = ['Valor Bruto', 'Valor Líquido']
+    for coluna in colunas_valores:
+        df_export[coluna] = pd.to_numeric(df_export[coluna], errors='coerce')
+
+    # Converte a coluna "Quantidade" para inteiro
+    if 'Quantidade' in df_export.columns:
+        df_export['Quantidade'] = pd.to_numeric(df_export['Quantidade'], errors='coerce').fillna(0).astype(int)
+
+    # Converte colunas de data para o formato 'dd/mm/yyyy'
     colunas_data = ['Data Recebimento', 'Data Inicio OS', 'Data Fim OS', 'Data Orçamento', 
                     'Data Solicitação', 'Data Carteira', 'Data Faturamento', 
-                    'Data Devolução', 'Data Oficial Faturamento']
-    
-    # Formata valores monetários como strings no formato brasileiro sem "R$"
-    for coluna in colunas_valores:
-        df_export[coluna] = df_export[coluna].apply(lambda x: f"{x:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".") if pd.notnull(x) else x)
-
-    # Converte colunas de data para strings no formato 'dd/mm/yyyy'
+                    'Data Devolução', 'Data Oficial Faturamento', 'Data Inspeção', 'Data Renegociação']
     for coluna in colunas_data:
         df_export[coluna] = pd.to_datetime(df_export[coluna], errors='coerce').dt.strftime('%d/%m/%Y')
 
     # Gera o arquivo Excel
     output = BytesIO()
     with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
-        # Escreve o DataFrame formatado no arquivo Excel
+        # Escreve o DataFrame no arquivo Excel
         df_export.to_excel(writer, index=False, sheet_name='Consulta Carteira')
         worksheet = writer.sheets['Consulta Carteira']
         

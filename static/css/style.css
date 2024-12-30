@@ -1,0 +1,29 @@
+/* Estilo para garantir que a tabela ocupe toda a largura da tela */
+.container {
+    max-width: 100%; /* Remover limites de largura */
+    padding-left: 0;
+    padding-right: 0;
+}
+
+/* Expandir a tabela para ocupar a largura total */
+.table-responsive {
+    width: 100%;
+}
+
+/* Forçar o layout das colunas da tabela para respeitar as larguras definidas */
+table {
+    table-layout: fixed; /* Forçar o layout fixo para respeitar as larguras */
+    width: 100%;
+}
+
+/* Definir larguras específicas para as colunas */
+th.min-width-col, td.min-width-col {
+    width: 80px !important; /* Defina a largura desejada aqui */
+}
+
+/* Ajustar o white-space para evitar que o texto quebre em múltiplas linhas */
+th, td {
+    white-space: nowrap;        /* Impede que o texto quebre */
+    overflow: hidden;           /* Esconde o conteúdo que ultrapassa a largura */
+    text-overflow: ellipsis;    /* Adiciona "..." quando o texto for maior que a largura */
+}
